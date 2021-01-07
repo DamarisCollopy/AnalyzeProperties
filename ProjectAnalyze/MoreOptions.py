@@ -13,7 +13,9 @@ def meu_switch():
                       "\n 5 : Open html file"
                       "\n 6 : Open web table"
                       "\n 7 : Series and DataFrame"
-                      "\n 8 : Sair \n"))
+                      "\n 8 :Organizing DataFrames"
+                      "\n 9 :Organizing DataFrames"
+                      "\n 10 : Sair \n"))
         if z == 1:
             open_json()
         elif z == 2:
@@ -29,6 +31,10 @@ def meu_switch():
         elif z == 7:
             series()
         elif z == 8:
+            organizing_dataFrames()
+        elif z == 9:
+            exercises()
+        elif z == 10:
             print("Programa encerrado")
             break
         else:
@@ -126,6 +132,54 @@ def series():
     # juntar por linhas usando o axis
     df4 = pd.concat([df1, df2, df3], axis=1)
     print(df4)
+def organizing_dataFrames():
+    data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    list('321')
+    df = pd.DataFrame(data, list('321'), list('ZYX'))
+    print(df)
 
+    # Usando sort_index que organiza o DataFrame pelo índice das linhas
+    df.sort_index(inplace=True)
+    # Usando sort_index que organiza o DataFrame pelo índice das linhas e colunas usando o axis=1
+    df.sort_index(inplace=True, axis=1)
+    # Podemos passar um paramentro para organizacao, 1 ou mais de um no caso aqui x,
+    # O índice foi invertido, com base na organização da variável X
+    df.sort_values(by='X', inplace=True)
+    print(df)
+    df.sort_values(by=['X', 'Y'], inplace=True)
+    print(df)
+    #Reorganizaremos o Dataframe tomando como referência as colunas. Adicionaremos o termo axis = 1 e especificaremos a linha 3.
+    df.sort_values(by='3', axis=1, inplace=True)
+    print(df)
+
+def exercises():
+    alunos = pd.DataFrame({'Nome': ['Ary', 'Cátia', 'Denis', 'Beto', 'Bruna', 'Dara', 'Carlos', 'Alice'],
+                           'Sexo': ['M', 'F', 'M', 'M', 'F', 'F', 'M', 'F'],
+                           'Idade': [15, 27, 56, 32, 42, 21, 19, 35],
+                           'Notas': [7.5, 2.5, 5.0, 10, 8.2, 7, 6, 5.6],
+                           'Aprovado': [True, False, False, True, True, True, False, False]},
+                          columns=['Nome', 'Idade', 'Sexo', 'Notas', 'Aprovado'])
+
+    print(alunos)
+    selecao = alunos['Aprovado'] == True
+    print(alunos[selecao])
+    print('Alunos {} aprovados '.format(alunos[selecao].shape[0]))
+
+    selecao = (alunos.Aprovado == True) & (alunos.Sexo == 'F')
+    print(alunos[selecao])
+    print('Alunas {} aprovados '.format(alunos[selecao].shape[0]))
+
+    selecao = (alunos.Idade > 10) & (alunos.Idade < 20) | (alunos.Idade >= 40)
+    print(alunos[selecao])
+    print('Alunos {} entre 10 a 20 anos e alunos maior que 40 anos '.format(alunos[selecao].shape[0]))
+    # Metodo loc ele faz a selecao pelas linhas, ate agora usamos pela coluna
+    print(alunos.loc[2])
+    # Metodo loc ele faz a selecao da linha e coluna me dando um valor
+    print('Idade do Denis {}'.format(alunos.loc[2,'Idade']))
+    # iloc[] , que utiliza os índices numéricos
+    print('Idade do Denis {}'.format(alunos.iloc[2,1]))
+    
+    print(alunos.loc[[2, 3], ['Nome','Idade']])
+    print(alunos.iloc[[2,3],[0,1]])
 if __name__ == "__main__":
     print(meu_switch())
