@@ -178,8 +178,15 @@ def exercises():
     print('Idade do Denis {}'.format(alunos.loc[2,'Idade']))
     # iloc[] , que utiliza os índices numéricos
     print('Idade do Denis {}'.format(alunos.iloc[2,1]))
-    
+
     print(alunos.loc[[2, 3], ['Nome','Idade']])
     print(alunos.iloc[[2,3],[0,1]])
+    #Crie um DataFrame somente com os alunos reprovados
+    selecao = alunos['Aprovado'] == False
+    print('Alunos reprovados')
+    print(alunos.loc[selecao, ['Nome', 'Sexo', 'Idade']])
+    # Crie uma visualização com os três alunos mais novos.
+    alunos.sort_values(by=['Idade'], inplace=True)
+    print(alunos.iloc[:3])
 if __name__ == "__main__":
     print(meu_switch())
