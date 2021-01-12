@@ -17,7 +17,8 @@ def meu_switch():
                       "\n 4 : Selection only condominium house, village house and houses"
                       "\n 5 : Properties with an area between 60 and 100 square meters"
                       "\n 6 : Properties with rent less than 2000 thousand reals and with 4 bedrooms"
-                      "\n 7 : Sair \n"))
+                      "\n 7 : Eliminating null value"
+                      "\n 8 : Sair \n"))
         if z == 1:
             filter()
         elif z == 2:
@@ -31,6 +32,8 @@ def meu_switch():
         elif z == 6:
             selection_rooms_low_value()
         elif z == 7:
+            selection_eliminating_null_value()
+        elif z == 8:
             print("Programa encerrado")
             break
         else:
@@ -110,6 +113,34 @@ def selection_rooms_low_value():
     # Numero de ocorrencias
     print('There is {} registration of properties with a profile of 4 rooms and with a value of less than 2000 thousand rental rents'
           .format(selectResidential[selection_value_rooms].shape[0]))
+def selection_eliminating_null_value () :
+    #Possuímos dois métodos que nos ajudam a realizar a seleção que precisamos.
+    # O primeiro deles é isnull(). Tal método irá gerar um DataFrame booleano,
+    # em que a observação marcada como True caracteriza um dado nulo
+    # método notnull(), que funciona exatamente da maneira inversa ao isnull(): se a informação for nula, será utilizada a notação False
+    # Método info(), que nos exibe informações do DataFrame.
+    print(selectResidential.info())
+    # Iremos observar as variáveis que apresentam dados faltantes.
+    print(selectResidential[selectResidential['Valor'].isnull()])
+
+    # dropna() elimina dados do dataframe
+    A = selectResidential.shape[0]
+    selectResidential.dropna(subset=['Valor'], inplace=True)
+    B = selectResidential.shape[0]
+    print('Exists {} null records deleted'.format(A - B))
+
+    # Agora vamos substituir esses valores nulos por 0
+    selection = (selectResidential['Tipo'] == 'Apartamento') & (selectResidential['Condominio'].isnull())
+    # Para eliminar as assinaturas nulas selecionadas ao invés de coletá-las, iremos adicionar ~ em selecao, que inverte a Series booleana.
+    A = selectResidential.shape[0]
+    data = selectResidential[~selection]
+    B = selectResidential.shape[0]
+    print('Exists {} null records deleted'.format(A - B))
+    #O que faremos é manter esses dados, mas atribuir o valor 0 a eles.
+    data = data.fillna({'Condominio': 0, 'IPTU': 0})
+    print(data.info())
+    # Agora vamos salvar esse dataframe, não queremos incluir o índice
+    data.to_csv('C:/Users/Damaris-PC/AnalyzeProperties/DataArch/residential.csv', sep=';',index = False)
 
 if __name__ == "__main__":
     print(meu_switch())
