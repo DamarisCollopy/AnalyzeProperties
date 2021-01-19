@@ -172,6 +172,10 @@ def exercises():
     selecao = (alunos.Idade > 10) & (alunos.Idade < 20) | (alunos.Idade >= 40)
     print(alunos[selecao])
     print('Alunos {} entre 10 a 20 anos e alunos maior que 40 anos '.format(alunos[selecao].shape[0]))
+    alunos['Faixa Etária'] = alunos['Idade'].apply(lambda x: 'Menor que 20 anos' if x < 20
+    else ('Entre 20 e 40 anos' if (x >= 20 and x <= 40)
+          else 'Maior que 40 anos'))
+    print(alunos)
     # Metodo loc ele faz a selecao pelas linhas, ate agora usamos pela coluna
     print(alunos.loc[2])
     # Metodo loc ele faz a selecao da linha e coluna me dando um valor

@@ -18,7 +18,9 @@ def meu_switch():
                       "\n 5 : Properties with an area between 60 and 100 square meters"
                       "\n 6 : Properties with rent less than 2000 thousand reals and with 4 bedrooms"
                       "\n 7 : Eliminating null value"
-                      "\n 8 : Sair \n"))
+                      "\n 8 : Creating new variables on the dataframe"
+                      "\n 9 : Grouping: neighborhood media"
+                      "\n 10 : Sair \n"))
         if z == 1:
             filter()
         elif z == 2:
@@ -34,6 +36,10 @@ def meu_switch():
         elif z == 7:
             selection_eliminating_null_value()
         elif z == 8:
+            selection_new_variables()
+        elif z == 9:
+            selection_grouping()
+        elif z == 10:
             print("Programa encerrado")
             break
         else:
@@ -74,6 +80,8 @@ def selection_residential():
     data_residential.to_csv('C:/Users/Damaris-PC/AnalyzeProperties/DataArch/residential.csv', sep=';', index=False)
     data_residential_read = pd.read_csv('C:/Users/Damaris-PC/AnalyzeProperties/DataArch/residential.csv', sep=';',)
     print(data_residential_read)
+    print(data_residential_read.Tipo.unique)
+    print(data_residential_read.Tipo.value_counts())
 
     numeros = [i for i in range(11)]
     letras = [chr(i + 65) for i in range(11)]
@@ -141,6 +149,48 @@ def selection_eliminating_null_value () :
     print(data.info())
     # Agora vamos salvar esse dataframe, não queremos incluir o índice
     data.to_csv('C:/Users/Damaris-PC/AnalyzeProperties/DataArch/residential.csv', sep=';',index = False)
+
+def selection_new_variables ():
+    #Criando uma variavel Gross Value, e atribuindo a ela a soma do valor + condominio + iptu
+    selectResidential['Gross Value'] = selectResidential['Valor'] + selectResidential['Condominio'] + selectResidential['IPTU']
+    selectResidential['Value m2'] = selectResidential['Valor'] / selectResidential['Area']
+    # Criou uma variavel value m2 e arredondou para 2 casas
+    selectResidential['Value m2'] = selectResidential['Value m2'].round(2)
+    selectResidential['Gross Value m2'] = (selectResidential['Gross Value'] / selectResidential['Area']).round(2)
+    #Agora, criaremos uma variável que abrigue os tipos de imóvel casa e apartamento, para tanto, devemos coletar a variável Tipo e recolher
+    # esses marcadores e indentifica-los. Criaremos uma lista com a identificação das house, então
+    house = ['Casa', 'Casa de Condomínio', 'Casa de Vila']
+    #apply() esse método pertmite que apliquemos uma função à cada registro do DataFrame. Para tanto, criaremos uma função lambda : 'lambda x: 'Casa' if x in casa else 'Apartamento'
+    selectResidential['Aggregate Type'] = selectResidential['Tipo'].apply(lambda x: 'Casa' if x in house else 'Apartamento')
+    print(selectResidential.head(10))
+
+    #Formas de apagar uma variavel do dataframe
+    #Criamos um DataFrame auxiliar para explorarmos as possibilidades disponíveis.
+    data_aux = pd.DataFrame(selectResidential[['Gross Value', 'Value m2', 'Gross Value m2', 'Aggregate Type']])
+    print(data_aux.head(10))
+    #Deletar opcao:
+    #1 del
+    del data_aux['Gross Value']
+    #2 pop
+    data_aux.pop('Gross Value m2')
+    #3 drop, axis metodo usado para definir coluna 1 linha 0, para funcionar com esse metodo deve ser usado o implace true
+    selectResidential.drop(['Gross Value m2', 'Gross Value'], axis=1, inplace=True)
+    print(selectResidential.head(10))
+    selectResidential.to_csv('C:/Users/Damaris-PC/AnalyzeProperties/DataArch/residential.csv', sep=';',index = False)
+    print(selectResidential.Tipo.unique())
+    print(selectResidential.Tipo.value_counts())
+
+def selection_grouping():
+    tratNeigh = selectResidential['Bairro'].drop_duplicates()
+    tratNeigh.to_csv('C:/Users/Damaris-PC/AnalyzeProperties/DataArch/neighborhood.csv', sep=';', index=False)
+    #Transforma dataframe em lista, value.tolist()
+    listNeigh  = tratNeigh.values.tolist()
+
+    #Criei uma lista com todos os bairros, agora posso trabalhar agrupandos e assim fazendo uma media de valor por bairros
+    selection = selectResidential['Bairro'].isin(listNeigh)
+    data = selectResidential[selection]
+    neighborhood_group = data.groupby('Bairro')
+    print(neighborhood_group[['Valor', 'Condominio']].mean().round(2))
 
 if __name__ == "__main__":
     print(meu_switch())
