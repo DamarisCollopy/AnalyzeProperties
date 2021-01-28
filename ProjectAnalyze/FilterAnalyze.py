@@ -205,5 +205,21 @@ def selection_grouping():
     fig.set_title('Average Rental Price per Neighborhood', {'fontsize': 16})
     plt.show()
 
+    classes = [0, 2, 4, 6, 100]
+    labels = ['1 and 2 bedrooms', '3 and 4 bedrooms', '5 and 6 bedrooms', '7 bedrooms or more']
+    #A função cut() é uma ferramenta do pandas que auxilia na criação distribuições de frequências.
+    #É possível criar labels para as classes criadas pela função cut().
+    #A função cut() permite que sejam especificados os limites de cada classe.
+    bedrooms = pd.cut(selectResidential.Quartos, classes, labels=labels)
+    #plt.bar(labels,bedrooms)
+    print(pd.value_counts(bedrooms))
+
+    # matplotlib para plotar um grafico
+    plt.rc('figure', figsize=(20, 10))
+    fig = pd.value_counts(bedrooms).plot.bar(color='blue')
+    fig.set_ylabel('Number of Occurrences', fontsize=16)
+    fig.set_title('List of Rooms', {'fontsize': 16})
+    plt.show()
+
 if __name__ == "__main__":
     print(meu_switch())
