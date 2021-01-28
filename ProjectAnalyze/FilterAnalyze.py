@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 #Saving data in a variable
 
@@ -191,6 +192,18 @@ def selection_grouping():
     data = selectResidential[selection]
     neighborhood_group = data.groupby('Bairro')
     print(neighborhood_group[['Valor', 'Condominio']].mean().round(2))
+    #Estatísticas descritivas
+    #describre() -  DataFrame com as colunas count a frequência; mean a média; std o desvio padrão; mino valor mínimo; 25%
+    # o primeiro quartio, 50% a mediana, 75% o terceiro quartio e max, o valor máximo.
+    print(neighborhood_group['Valor'].describe().round(2))
+    #O método aggregate() permite selecionar um conjunto de estatísticas personalizado. É possível declarar o método de forma simplificada, utilizando agg()
+    print(neighborhood_group['Valor'].aggregate(['min', 'max', 'sum']).rename(columns = {'min': 'Mínimo', 'max': 'Máximo'}))
+
+    plt.rc('figure', figsize=(20, 10))
+    fig = neighborhood_group['Valor'].mean().plot.bar(color='blue')
+    fig.set_ylabel('Rent Value',fontsize=16)
+    fig.set_title('Average Rental Price per Neighborhood', {'fontsize': 16})
+    plt.show()
 
 if __name__ == "__main__":
     print(meu_switch())
